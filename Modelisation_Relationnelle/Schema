@@ -1,0 +1,26 @@
+CLIENT (0,N) ---- passe ---- (1,1) COMMANDE
+
+COMMANDE (1,N) ---- contient ---- (1,1) LIGNE_COMMANDE
+
+PRODUIT (0,N) ---- apparaît dans ---- (1,1) LIGNE_COMMANDE
+
+CLIENT
+- id_client
+- nom
+- contact
+
+COMMANDE
+- id_commande
+- date_achat
+- statut
+- adresse_livraison
+
+PRODUIT
+- id_produit
+- code_prod
+- designation
+- prix_unitaire_ht
+
+LIGNE_COMMANDE
+- id_ligne
+- quantite
