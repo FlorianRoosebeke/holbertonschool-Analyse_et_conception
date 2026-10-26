@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: MegaShop-B2B API
+  version: 1.0.0
+  description: API publique de MegaShop-B2B.
+  contact:
+    name: Équipe API MegaShop-B2B
+    email: api@megashop-b2b.com
+servers:
+  - url: https://api.megashop-b2b.com/v1
+tags:
+  - name: Payments
+    description: Notifications de paiement envoyées par la banque partenaire.
+paths:
+  /payments/webhook:
+    post:
+      operationId: receivePaymentWebhook
+      summary: Recevoir une notification de paiement de la banque
+      description: Webhook appelé par la banque lorsqu'une transaction est validée ou refusée.
+      tags:
+        - Payments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookPayload'
+      responses:
+        '204':
+          description: Notification reçue et traitée (aucun corps de réponse).
+        '400':
+          description: Payload invalide.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    WebhookPayload:
+      type: object
+      additionalProperties: false
+      required:
+        - orderId
+        - status
+        - transactionId
+      properties:
+        orderId:
+          type: string
+          format: uuid
+          description: Identifiant de la commande.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        status:
+          type: string
+          enum:
+            - SUCCESS
+            - FAILED
+          description: Résultat du paiement renvoyé par la banque.
+          example: SUCCESS
+        transactionId:
+          type: string
+          pattern: '^TXN-[0-9]{8}$'
+          description: Identifiant de transaction bancaire.
+          example: TXN-12345678
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Message d'erreur lisible.
+          example: "Le champ transactionId doit respecter le format TXN-XXXXXXXX."
